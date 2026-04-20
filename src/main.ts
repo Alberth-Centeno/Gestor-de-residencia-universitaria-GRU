@@ -7,8 +7,10 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
 
   const confg = new DocumentBuilder()
+
     .setTitle('Api_GRU')
     .setDescription('Api de gestor de residencia universitaria')
+
     .setVersion('1.0')
     .build();
 
