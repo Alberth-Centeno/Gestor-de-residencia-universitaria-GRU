@@ -1,11 +1,27 @@
 import { Module } from '@nestjs/common';
 import { StudentsModule } from './modules/students/students.module';
-import { ExitPermitsController } from './modules/exit_permits/controllers/exit_permits.controller';
-import { ExitPermitsService } from './modules/exit_permits/services/exit_permits.service';
+import { ExitPermitsModule } from './modules/exit_permits/exit_permits.module';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [StudentsModule],
-  controllers: [ExitPermitsController],
-  providers: [ExitPermitsService],
+
+  imports: [StudentsModule, TasksModule,ExitPermintsModule,ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      autoLoadEntities: true,
+      synchronize: true,
+      entities: [StudentsModule],
+    }),
+  ],
+  controllers: [],
+  providers: [],
+
 })
 export class AppModule {}
