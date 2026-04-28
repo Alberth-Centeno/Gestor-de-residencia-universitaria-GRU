@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { StudentsModule } from './modules/students/students.module';
 import { TasksModule } from './modules/tasks/tasks.module';
-import{FileModule} from './modules/files/files.module';
 
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
 
-  imports: [StudentsModule, TasksModule,FileModule,ConfigModule.forRoot(),
+  imports: [StudentsModule, TasksModule,ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
