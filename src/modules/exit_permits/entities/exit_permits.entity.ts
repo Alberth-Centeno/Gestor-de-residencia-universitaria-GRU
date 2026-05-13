@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Estudiante } from '../../students/entities/student.entity';
+import { StudentEntity } from '../../students/entities/student.entity';
 // import { User } from '../users/entities/user.entity';
 
 @Entity('exit_permits')
@@ -10,9 +10,9 @@ export class ExitPermit {
   @Column()
   student_id!: number;
 
-  @ManyToOne(() => Estudiante)
+  @ManyToOne(() => StudentEntity)
   @JoinColumn({ name: 'student_id' })
-  Studen!: Estudiante;
+  student!: StudentEntity;
 
   @Column({ type: 'text' })
   reason!: string;

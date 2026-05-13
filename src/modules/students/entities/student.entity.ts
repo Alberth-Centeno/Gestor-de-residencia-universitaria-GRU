@@ -1,44 +1,31 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 
-@Entity('estudiantes')
-export class Estudiante {
+@Entity('students')
+export class StudentEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
-  @Column({ type: 'int4' })
-  usuario_id!: number;
+  @Column({ unique: true })
+  student_code: string;
 
-  @Column({ type: 'varchar', length: 80 })
-  nombre_completo!: string;
+  @Column()
+  first_name: string;
 
-  @Column({ type: 'varchar', length: 13 })
-  cedula!: string;
+  @Column()
+  last_name: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  codigo_unico!: string;
+  @Column()
+  career: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  carrera!: string;
+  @Column({ nullable: true })
+  room_number: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  cuarto_asignado!: string;
+  @Column({ default: 'Active' })
+  scholarship_status: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  estado_beca!: string;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  created_at!: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updated_at!: Date;
-
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deleted_at!: Date;
+  // Relación Uno a Uno con User
+  @OneToOne(() => UserEntity, (user) => user.id, { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' }) // Esto crea la clave foránea user_id en la tabla students
+  user: UserEntity;
 }
