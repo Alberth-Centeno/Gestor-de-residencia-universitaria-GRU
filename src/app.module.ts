@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { StudentsModule } from './modules/students/students.module';
+import { ExitPermitsModule } from './modules/exit_permits/exit_permits.module';
 import { TasksModule } from './modules/tasks/tasks.module';
+import { UserModule } from './modules/users/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
-
     ConfigModule.forRoot({ isGlobal: true }),
 
     TypeOrmModule.forRoot({
@@ -19,7 +23,11 @@ import { TasksModule } from './modules/tasks/tasks.module';
       synchronize: true,
     }),
 
+    StudentsModule,
     TasksModule,
+    ExitPermitsModule,
+    UserModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
