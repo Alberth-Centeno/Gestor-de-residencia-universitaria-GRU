@@ -1,5 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
+export enum UserRole {
+    ADMIN = 'Admin',
+    SUPERIOR = 'Superior',
+    INSPECTOR = 'Inspector',
+    GUARD = 'Guard',
+    STUDENT = 'Student',
+    }
 
 @Entity('user')
 export class UserEntity {
@@ -12,8 +19,8 @@ export class UserEntity {
     @Column({type: 'varchar', length: 255})
     password: string;
 
-    @Column({type: 'varchar', length: 255})
-    role: string;
+    @Column({type: 'varchar', default: UserRole.STUDENT})
+    role: UserRole;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;
