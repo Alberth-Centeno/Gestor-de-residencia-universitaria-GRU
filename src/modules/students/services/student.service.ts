@@ -11,18 +11,15 @@ export class StudentService {
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
     
-    // Inyectamos el servicio de usuarios para crear las credenciales primero
+
     private readonly userService: UserService,
   ) {}
 
-  /**
-   * Crea un usuario y un perfil de estudiante vinculado
-   */
+  
   async create(createStudentData: any) {
     const { email, password, ...studentDetails } = createStudentData;
 
-    // 1. Crear el usuario con el rol de STUDENT
-    // Nota: El password se encriptará dentro del UserService.create
+
     const user = await this.userService.create({
       email,
       password,
@@ -30,18 +27,14 @@ export class StudentService {
     });
 
     try {
-      // 2. Crear la entidad estudiante vinculando el objeto 'user' completo
       const newStudent = this.studentRepository.create({
         ...studentDetails,
         user: user, // TypeORM extraerá el ID automáticamente para la FK
       });
 
-      // 3. Guardar en la tabla 'students'
       return await this.studentRepository.save(newStudent);
       
     } catch (error) {
-      // Si falla la creación del estudiante (ej: carnet duplicado), 
-      // podrías implementar lógica para borrar el usuario creado (rollback manual)
       if (error instanceof Object && 'code' in error && error.code === '23505') {
         throw new ConflictException('El carnet estudiantil ya existe');
       }
@@ -49,18 +42,14 @@ export class StudentService {
     }
   }
 
-  /**
-   * Obtener todos los estudiantes con sus datos de usuario (Email)
-   */
+  
   async findAll(): Promise<StudentEntity[]> {
     return await this.studentRepository.find({
       relations: ['user'], // Esto hace el 'JOIN' para traer el correo y rol
     });
   }
 
-  /**
-   * Buscar un estudiante por ID incluyendo su cuenta de usuario
-   */
+  
   async findOne(id: number): Promise<StudentEntity | null> {
     return await this.studentRepository.findOne({
       where: { id },
