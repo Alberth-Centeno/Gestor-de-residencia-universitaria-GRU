@@ -1,22 +1,62 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity('tasks') // crea la tabla 'tasks' en la base de datos
+@Entity('tasks')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  title: string; // Limpieza de Cocina
+  student_id: number;
 
-  @Column({ type: 'text', nullable: true })
-  description: string; // Detalles de la tarea
+  @Column({
+    type: 'varchar',
+    default: 'Kitchen',
+  })
+  task_type: string;
 
-  @Column({ default: 'pending' })
-  status: string; // pending, in-progress, completed
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  description: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  deadline: Date; // Fecha límite para cumplirla
+  @Column({
+    type: 'date',
+  })
+  scheduled_date: Date;
+
+  @Column({
+    type: 'varchar',
+    default: 'Pending',
+  })
+  status: string;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  completed_at: Date;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  verified_at: Date;
+
+  @Column({
+    nullable: true,
+  })
+  verified_by: number;
 
   @CreateDateColumn()
-  createdAt: Date; // la Fecha en que se creó el registro
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
