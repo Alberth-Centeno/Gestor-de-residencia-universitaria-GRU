@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
+import { Entity,
+        PrimaryGeneratedColumn,
+        Column, CreateDateColumn, 
+        UpdateDateColumn, 
+        DeleteDateColumn, 
+        OneToOne }
+         from "typeorm";
+import { StudentEntity } from "../../students/entities/student.entity";
 
 export enum UserRole {
     ADMIN = 'Admin',
@@ -13,7 +20,7 @@ export class UserEntity {
     @PrimaryGeneratedColumn('increment', {type:'int4'})
     id: number;
 
-    @Column({type: 'varchar', length: 255})
+    @Column({type: 'varchar', length: 255, unique: true})
     email: string;
 
     @Column({type: 'varchar', length: 255})
@@ -30,4 +37,7 @@ export class UserEntity {
 
     @DeleteDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     deleted_at: Date;
+
+    @OneToOne(() => StudentEntity, (student) => student.user)
+    student: StudentEntity;
 }
