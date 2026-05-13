@@ -8,14 +8,15 @@ import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-
   imports: [
     StudentsModule,
     TasksModule,
     ExitPermitsModule,
     UserModule,
     AuthModule,
+
     ConfigModule.forRoot(),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -25,11 +26,10 @@ import { AuthModule } from './modules/auth/auth.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [StudentsModule],
     }),
   ],
+
   controllers: [],
   providers: [],
-
 })
 export class AppModule {}
