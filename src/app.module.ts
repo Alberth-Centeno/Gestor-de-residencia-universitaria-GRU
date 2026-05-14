@@ -7,6 +7,8 @@ import { ExitPermitsModule } from './modules/exit_permits/exit_permits.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { Feedback } from './modules/feedbacks/entities/feedback.entity';
+import { FeedbackModule } from './modules/feedbacks/feedback.module';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ExitPermitsModule,
     UserModule,
     AuthModule,
+    FeedbackModule
   ],
 })
 export class AppModule {}
