@@ -12,22 +12,22 @@ import {
 @Entity('estudiantes')
 export class Estudiante {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
-  @Column({ type: 'int4' })
-  usuario_id!: number;
+  @Column({ unique: true })
+  student_code: string;
 
-  @Column({ type: 'varchar', length: 80 })
-  nombre_completo!: string;
+  @Column()
+  first_name: string;
 
-  @Column({ type: 'varchar', length: 13 })
-  cedula!: string;
+  @Column()
+  last_name: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  codigo_unico!: string;
+  @Column()
+  career: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  carrera!: string;
+  @Column({ nullable: true })
+  room_number: string;
 
   @Column({ type: 'varchar', length: 50 })
   cuarto_asignado!: string;

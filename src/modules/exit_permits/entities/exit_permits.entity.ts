@@ -8,6 +8,7 @@ import {
 
 import { Estudiante } from '../../students/entities/student.entity';
 
+
 @Entity('exit_permits')
 export class ExitPermit {
 
@@ -19,7 +20,7 @@ export class ExitPermit {
 
   @ManyToOne(() => Estudiante, (estudiante) => estudiante.exitPermits)
   @JoinColumn({ name: 'student_id' })
-  student!: Estudiante;
+  student!: Estudiante ;
 
   @Column({ type: 'text' })
   reason!: string;
