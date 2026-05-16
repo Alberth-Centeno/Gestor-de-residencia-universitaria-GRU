@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExitPermit } from './entities/exit_permits.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([ExitPermit])],
-  exports: [ ExitPermitsService],
+  exports: [TypeOrmModule, ExitPermitsService],
   providers: [ExitPermitsService],
   controllers: [ExitPermitsController],
 })

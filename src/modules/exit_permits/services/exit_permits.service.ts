@@ -1,34 +1,33 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ExitPermit } from '../entities/exit_permits.entity';
-import { CreateExitPermitDto } from '../dto/exit_permit.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
+import { CreateExitPermitDto } from '../dto/exit_permit.dto';
 
 @Injectable()
 export class ExitPermitsService {
     constructor(
-      @InjectRepository(ExitPermit)
-      private readonly exitPermitsRepository: Repository<ExitPermit>,
-    ){}
+        @InjectRepository(ExitPermit)
+        private readonly exit_permitsRepository: Repository<ExitPermit>,
+    ) {}
 
-    async create(CreateExitPermitDto: CreateExitPermitDto){
-        try {
-            console.log('Datos liostos para guardar exit permits',CreateExitPermitDto);
-            const newExitPermit = this.exitPermitsRepository.create(CreateExitPermitDto);
-            await this.exitPermitsRepository.save(newExitPermit);
+    async create(createExitPermitDto: CreateExitPermitDto ){
+        try{
+            console.log('Datos listos para guardar :', createExitPermitDto);
+            const newExitPermit = this.exit_permitsRepository.create(createExitPermitDto);
+            await this.exit_permitsRepository.save(newExitPermit);
             return newExitPermit;
-        } catch (error) {
+        }catch(error){
             console.log(error);
-            throw new InternalServerErrorException('Error al crear exit permits');
+            throw new  InternalServerErrorException('Error al guardar el registro');
         }
     }
     async findAll(){
-        try {
-            return await this.exitPermitsRepository.find();
+        try{
+            return await this.exit_permitsRepository.find();
         }catch(error){
             console.log(error);
-            throw new InternalServerErrorException('Error al obtener exit permits');
+            throw new  InternalServerErrorException('Error al obtener todos los registros');
         }
     }
 }

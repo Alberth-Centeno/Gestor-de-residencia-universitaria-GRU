@@ -17,7 +17,7 @@ export class ExitPermit {
   @Column()
   student_id!: number;
 
-  @ManyToOne(() => Estudiante)
+  @ManyToOne(() => Estudiante, (estudiante) => estudiante.exitPermits)
   @JoinColumn({ name: 'student_id' })
   student!: Estudiante;
 

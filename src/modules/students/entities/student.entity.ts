@@ -1,3 +1,4 @@
+import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
 import {
   Entity,
   Column,
@@ -5,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('estudiantes')
@@ -41,4 +43,7 @@ export class Estudiante {
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deleted_at!: Date;
+
+  @OneToMany(() => ExitPermit, (exitPermit) => exitPermit.student)
+  exitPermits!: ExitPermit[];
 }
