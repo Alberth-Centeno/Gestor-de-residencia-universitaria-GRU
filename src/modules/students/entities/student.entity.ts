@@ -1,49 +1,38 @@
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  OneToMany,
-} from 'typeorm';
 
-@Entity('estudiantes')
-export class Estudiante {
-  @PrimaryGeneratedColumn()
+@Entity('students')
+export class StudentEntity {
+  @PrimaryGeneratedColumn('increment', { type: 'int4' })
   id: number;
 
   @Column({ unique: true })
   student_code: string;
 
-  @Column()
+  @Column({ type: 'int4' })
+  user_id: number;
+
+  @Column('varchar', { length: 255 })
   first_name: string;
 
-  @Column()
+  @Column('varchar', { length: 255 })
   last_name: string;
 
-  @Column()
+  @Column('varchar', { length: 255 })
   career: string;
 
-  @Column({ nullable: true })
+  @Column('varchar', { length: 255, nullable: true })
   room_number: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  cuarto_asignado!: string;
+  @Column('varchar', { length: 255, default: 'Active' })
+  scholarship_status: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  estado_beca!: string;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  created_at!: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updated_at!: Date;
-
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deleted_at!: Date;
+ 
+  @OneToOne(() => UserEntity, (user) => user.id, { cascade: true, onDelete: 'CASCADE' })
+  user: UserEntity;
 
   @OneToMany(() => ExitPermit, (exitPermit) => exitPermit.student)
-  exitPermits!: ExitPermit[];
+  @JoinColumn({ name: 'user_id' })
+  exitPermits: ExitPermit[];
 }

@@ -1,59 +1,69 @@
 // src/modules/students/services/student.service.ts
-import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentEntity } from '../entities/student.entity';
 import { UserService } from '../../users/services/user.service';
-import { UserRole } from '../../users/entities/user.entity';
+
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
-    
-
-    private readonly userService: UserService,
+    private readonly userService: UserService, // Lo seguimos necesitando para validar el ID
   ) {}
 
-  
   async create(createStudentData: any) {
-    const { email, password, ...studentDetails } = createStudentData;
+    const { 
+        user_id, 
+        student_code, 
+        first_name, 
+        last_name, 
+        career, 
+        room_number, 
+        scholarship_status 
+    } = createStudentData;
 
-
-    const user = await this.userService.create({
-      email,
-      password,
-      role: UserRole.STUDENT,
-    });
+   
+    const existingUser = await this.userService.findById(user_id);
+    if (!existingUser) {
+        throw new NotFoundException(`No se puede crear el estudiante porque el usuario con ID ${user_id} no existe.`);
+    }
 
     try {
-      const newStudent = this.studentRepository.create({
-        ...studentDetails,
-        user: user, // TypeORM extraerá el ID automáticamente para la FK
-      });
 
+      const newStudent = this.studentRepository.create({
+        student_code,
+        first_name,
+        last_name,
+        career,
+        room_number,
+        scholarship_status,
+        user: existingUser,   });
+
+  
       return await this.studentRepository.save(newStudent);
       
-    } catch (error) {
-      if (error instanceof Object && 'code' in error && error.code === '23505') {
-        throw new ConflictException('El carnet estudiantil ya existe');
+    } catch (error: unknown) {
+      if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: string }).code === '23505') { 
+        // 23505 = Unique Violation en Postgres
+        throw new ConflictException('El carnet estudiantil o el ID de usuario ya están registrados en otro perfil.');
       }
-      throw new InternalServerErrorException('Error al crear el perfil del estudiante');
+      
+      console.error('Error al guardar estudiante:', error);
+      throw new InternalServerErrorException('Error interno al crear el perfil del estudiante.');
     }
   }
 
-  
-  async findAll(): Promise<StudentEntity[]> {
-    return await this.studentRepository.find({
-      relations: ['user'], // Esto hace el 'JOIN' para traer el correo y rol
-    });
+  async findAll() {
+    return await this.studentRepository.find({ relations: ['user'] });
   }
 
-  
-  async findOne(id: number): Promise<StudentEntity | null> {
-    return await this.studentRepository.findOne({
-      where: { id },
-      relations: ['user'],
-    });
+  async findOne(id: number) {
+    const student = await this.studentRepository.findOne({ where: { id }, relations: ['user'] });
+    if (!student) {
+      throw new NotFoundException(`Estudiante con ID ${id} no encontrado.`);
+    }
+    return student;
   }
 }

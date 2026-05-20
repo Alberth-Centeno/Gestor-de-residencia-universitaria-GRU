@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { Estudiante } from '../../students/entities/student.entity';
+import { StudentEntity } from '../../students/entities/student.entity';
 
 
 @Entity('exit_permits')
@@ -18,9 +18,9 @@ export class ExitPermit {
   @Column()
   student_id!: number;
 
-  @ManyToOne(() => Estudiante, (estudiante) => estudiante.exitPermits)
+  @ManyToOne(() => StudentEntity, (student) => student.exitPermits)
   @JoinColumn({ name: 'student_id' })
-  student!: Estudiante ;
+  student!: StudentEntity ;
 
   @Column({ type: 'text' })
   reason!: string;
