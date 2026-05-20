@@ -1,10 +1,15 @@
 import { Module } from "@nestjs/common";
-import { FeedbackModule } from "./controllers/feedback.controller";
+import { FeedbackController} from "./controllers/feedback.controller";
+import { FeedbackService } from "./service/feedback.service";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Feedback } from "./entities/feedback.entity";
 
 
 
 @Module({
-    controllers: [FeedbackModule],
-    providers: [FeedbackModule]
+    imports: [TypeOrmModule.forFeature([Feedback])],
+    controllers: [FeedbackController],
+    providers: [FeedbackService],
+    exports: []
 })
 export class TasksModule {}

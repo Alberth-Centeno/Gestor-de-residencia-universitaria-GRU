@@ -1,25 +1,12 @@
-import { IsEmail, IsNotEmpty, IsString, IsEnum, IsOptional, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsEnum, IsOptional, MinLength, IsIn, IsInt } from 'class-validator';
 import { UserRole } from '../../users/entities/user.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CreateStudentDto {
-  // --- Datos para la cuenta de Usuario ---
-  @IsEmail({}, { message: 'El correo electrónico no es válido' })
-  @IsNotEmpty()
+  @IsInt()
   @ApiProperty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
-  password: string;
-
-  @IsEnum(UserRole)
-  @IsOptional()
-  @ApiProperty()
-  role?: UserRole = UserRole.STUDENT; 
-
+  @IsNotEmpty({message: 'El ID del usuario es obligatorio para vincular el perfil del estudiante.'})
+  user_id: number;
 
   @IsString()
   @IsNotEmpty()
@@ -48,3 +35,5 @@ export class CreateStudentDto {
   @IsOptional()
   scholarship_status?: string = 'Active'; 
 }
+
+export class UpdateStudentDto extends PartialType(CreateStudentDto) {}

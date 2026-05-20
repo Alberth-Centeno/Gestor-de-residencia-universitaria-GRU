@@ -1,5 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
-import { FeedbackService } from '../service/feedback.service';
+import { Controller, } from "@nestjs/common";
 
 @Controller('feedback')
 export class FeedbackController{
