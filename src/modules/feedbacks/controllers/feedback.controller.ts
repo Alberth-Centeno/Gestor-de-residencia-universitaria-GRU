@@ -1,10 +1,23 @@
-import {Controller,Get,Post,Body,Param,Put,Delete} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 
-import { FeedbackService } from '../service/feedback.service';
-import {CreateFeedbackDto,UpdateFeedbackDto} from '../dto/feedback.dto';
+import { FeedbackService } from '../services/feedback.service';
+
+import {
+  CreateFeedbackDto,
+  UpdateFeedbackDto,
+} from '../dto/feedback.dto';
 
 @Controller('feedback')
 export class FeedbackController {
+
   constructor(
     private readonly feedbackService: FeedbackService,
   ) {}
@@ -24,11 +37,13 @@ export class FeedbackController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(
+    @Param('id') id: string,
+  ) {
     return this.feedbackService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateFeedbackDto: UpdateFeedbackDto,
@@ -40,7 +55,9 @@ export class FeedbackController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(
+    @Param('id') id: string,
+  ) {
     return this.feedbackService.remove(+id);
   }
 }

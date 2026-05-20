@@ -1,18 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
 import { StudentEntity } from '../../students/entities/student.entity';
-// import { User } from '../users/entities/user.entity';
+
 
 @Entity('exit_permits')
 export class ExitPermit {
+
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
   student_id!: number;
 
-  @ManyToOne(() => StudentEntity)
+  @ManyToOne(() => StudentEntity, (student) => student.exitPermits)
   @JoinColumn({ name: 'student_id' })
-  student!: StudentEntity;
+  student!: StudentEntity ;
 
   @Column({ type: 'text' })
   reason!: string;
@@ -23,7 +31,10 @@ export class ExitPermit {
   @Column({ type: 'timestamp' })
   requested_return!: Date;
 
-  @Column({type: 'varchar',default: 'Pending',comment: 'Pending, Approved, Rejected, Departed, Returned_OnTime, Returned_Late'})
+  @Column({
+    type: 'varchar',
+    default: 'Pending',
+  })
   status!: string;
 
   @Column({ nullable: true })
@@ -32,18 +43,18 @@ export class ExitPermit {
   @Column({ type: 'timestamp', nullable: true })
   approval_date!: Date;
 
-  @Column({ nullable: true, comment: 'Guarda que registró la salida' })
+  @Column({ nullable: true })
   guard_departure_id!: number;
 
   @Column({ type: 'timestamp', nullable: true })
   actual_departure!: Date;
 
-  @Column({ nullable: true, comment: 'Guarda que registró el retorno' })
+  @Column({ nullable: true })
   guard_return_id!: number;
 
   @Column({ type: 'timestamp', nullable: true })
   actual_return!: Date;
 
-  @Column({ type: 'text', nullable: true, comment: 'Observaciones del guarda' })
+  @Column({ type: 'text', nullable: true })
   guard_observations!: string;
 }

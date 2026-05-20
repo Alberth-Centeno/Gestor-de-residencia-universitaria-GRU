@@ -3,9 +3,11 @@ import { Entity,
         Column, CreateDateColumn, 
         UpdateDateColumn, 
         DeleteDateColumn, 
-        OneToOne }
+        OneToOne, 
+        OneToMany}
          from "typeorm";
 import { StudentEntity } from "../../students/entities/student.entity";
+import { NotificationsEntity } from "../../notifications/entities/notifications.entity";
 
 export enum UserRole {
     ADMIN = 'Admin',
@@ -40,4 +42,7 @@ export class UserEntity {
 
     @OneToOne(() => StudentEntity, (student) => student.user)
     student: StudentEntity;
+
+    @OneToMany(() => NotificationsEntity, (notification) => notification.user)
+    notifications: NotificationsEntity[];
 }
