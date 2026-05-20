@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ExitPermitsService } from './services/exit_permits.service';
 import { ExitPermitsController } from './controllers/exit_permits.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ExitPermit } from './entities/exit_permits.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([ExitPermitsService])],
+  imports: [TypeOrmModule.forFeature([ExitPermit])],
   exports: [TypeOrmModule, ExitPermitsService],
   providers: [ExitPermitsService],
   controllers: [ExitPermitsController],

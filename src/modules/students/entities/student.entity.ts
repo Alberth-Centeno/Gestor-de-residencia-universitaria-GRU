@@ -1,8 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
-import { UserEntity } from '../../users/entities/user.entity';
+import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  OneToMany,
+} from 'typeorm';
 
-@Entity('students')
-export class StudentEntity {
+@Entity('estudiantes')
+export class Estudiante {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,11 +29,21 @@ export class StudentEntity {
   @Column({ nullable: true })
   room_number: string;
 
-  @Column({ default: 'Active' })
-  scholarship_status: string;
+  @Column({ type: 'varchar', length: 50 })
+  cuarto_asignado!: string;
 
-  // Relación Uno a Uno con User
-  @OneToOne(() => UserEntity, (user) => user.id, { cascade: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' }) // Esto crea la clave foránea user_id en la tabla students
-  user: UserEntity;
+  @Column({ type: 'varchar', length: 50 })
+  estado_beca!: string;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  created_at!: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at!: Date;
+
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deleted_at!: Date;
+
+  @OneToMany(() => ExitPermit, (exitPermit) => exitPermit.student)
+  exitPermits!: ExitPermit[];
 }
