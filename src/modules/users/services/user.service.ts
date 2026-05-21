@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -57,8 +58,27 @@ export class UserService {
         });
       }
  
-  async remove(id: number): Promise<void> {
+  async update(id: number, updateData: Partial<UserEntity>): Promise<UserEntity> {
     const user = await this.findById(id);
-    await this.userRepository.softRemove(user);
-  }
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    if (updateData.password) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(updateData.password, salt);
+    }
+
+    Object.assign(user, updateData);
+    return await this.userRepository.save(user);
+   }    
+ async delete(id: number): Promise<void> {
+    
+    const result = await this.userRepository.delete(id);
+
+    
+    if (result.affected === 0) {
+      throw new NotFoundException(`El usuario con el ID ${id} no fue encontrado`);
+    }
+}
 }

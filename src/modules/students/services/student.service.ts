@@ -1,5 +1,5 @@
 // src/modules/students/services/student.service.ts
-import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException, Delete } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentEntity } from '../entities/student.entity';
@@ -8,6 +8,7 @@ import { CreateStudentDto } from '../dto/student.dto';
 
 @Injectable()
 export class StudentService {
+
   constructor(
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
@@ -68,5 +69,23 @@ export class StudentService {
       throw new NotFoundException(`Estudiante con ID ${id} no encontrado.`);
     }
     return student;
+  }
+
+  async update(id: number, updateData: Partial<StudentEntity>) {
+    const student = await this.findOne(id);
+    if (!student) {
+      throw new NotFoundException(`Estudiante con ID ${id} no encontrado.`);
+    }
+
+    Object.assign(student, updateData);
+    return await this.studentRepository.save(student);
+  }
+
+  async delete(id: number) {
+    const student = await this.findOne(id);
+    if (!student) {
+      throw new NotFoundException(`Estudiante con ID ${id} no encontrado.`);
+    }
+    await this.studentRepository.delete(id);
   }
 }
