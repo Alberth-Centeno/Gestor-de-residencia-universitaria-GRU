@@ -37,12 +37,12 @@ export class UserService {
 
  
   async findByEmail(email: string): Promise<UserEntity | null> {
-    return await this.userRepository.findOne({ where: { email } });
+    return await this.userRepository.findOne({ where: { email }, withDeleted: true });
   }
 
  
   async findById(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ where: { id:id, }, withDeleted: true });
     if (!user) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
@@ -50,10 +50,12 @@ export class UserService {
   }
 
  
-  async findAll(): Promise<UserEntity[]> {
-    return await this.userRepository.find();
-  }
-
+   async findAll(): Promise<UserEntity[]> {
+        return this.userRepository.find({
+            withDeleted: true,      
+            order: { created_at: 'DESC' },
+        });
+      }
  
   async remove(id: number): Promise<void> {
     const user = await this.findById(id);
