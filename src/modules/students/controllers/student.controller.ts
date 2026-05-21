@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, HttpStatus, HttpCode, Put, Delete } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
 import { CreateStudentDto } from '../dto/student.dto';
 
@@ -21,5 +21,16 @@ export class StudentController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.studentService.findOne(id);
+  }
+
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateStudentDto>) {
+    return await this.studentService.update(id, updateData);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.studentService.delete(id);
   }
 }
