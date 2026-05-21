@@ -4,16 +4,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentEntity } from '../entities/student.entity';
 import { UserService } from '../../users/services/user.service';
+import { CreateStudentDto } from '../dto/student.dto';
 
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
-    private readonly userService: UserService, // Lo seguimos necesitando para validar el ID
+    private readonly userService: UserService,
   ) {}
 
-  async create(createStudentData: any) {
+  async create(createStudentData: CreateStudentDto) {
     const { 
         user_id, 
         student_code, 
@@ -33,6 +34,7 @@ export class StudentService {
     try {
 
       const newStudent = this.studentRepository.create({
+        user_id: user_id,
         student_code,
         first_name,
         last_name,
@@ -46,7 +48,6 @@ export class StudentService {
       
     } catch (error: unknown) {
       if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: string }).code === '23505') { 
-        // 23505 = Unique Violation en Postgres
         throw new ConflictException('El carnet estudiantil o el ID de usuario ya están registrados en otro perfil.');
       }
       
@@ -56,11 +57,13 @@ export class StudentService {
   }
 
   async findAll() {
-    return await this.studentRepository.find({ relations: ['user'] });
+    return await this.studentRepository.find({
+      withDeleted: true, 
+      relations: ['user'] });
   }
 
   async findOne(id: number) {
-    const student = await this.studentRepository.findOne({ where: { id }, relations: ['user'] });
+    const student = await this.studentRepository.findOne({ where: { id }, relations: ['user'] , withDeleted: true });
     if (!student) {
       throw new NotFoundException(`Estudiante con ID ${id} no encontrado.`);
     }

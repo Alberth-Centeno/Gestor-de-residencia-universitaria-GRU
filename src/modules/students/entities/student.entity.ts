@@ -6,12 +6,13 @@ import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
 export class StudentEntity {
   @PrimaryGeneratedColumn('increment', { type: 'int4' })
   id: number;
+  
+  @Column({ type: 'int4' })
+  user_id: number;
 
   @Column({ unique: true })
   student_code: string;
 
-  @Column({ type: 'int4' })
-  user_id: number;
 
   @Column('varchar', { length: 255 })
   first_name: string;
@@ -30,9 +31,9 @@ export class StudentEntity {
 
  
   @OneToOne(() => UserEntity, (user) => user.id, { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @OneToMany(() => ExitPermit, (exitPermit) => exitPermit.student)
-  @JoinColumn({ name: 'user_id' })
   exitPermits: ExitPermit[];
 }

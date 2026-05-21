@@ -13,27 +13,26 @@ export class NotificationsService {
     private readonly userService: UserService,
   ) {}
 
-  async create(userId: number, message: string): Promise<NotificationsEntity> {
+ async create(userId: number, message: string): Promise<NotificationsEntity> {
     const user = await this.userService.findById(userId);
     if (!user) {
         throw new NotFoundException(`Usuario con ID ${userId} no encontrado para notificar.`);
     }
 
     const newNotification = this.notificationRepository.create({
-      user_id: userId,
-      message: message,
-      is_read: false, 
-      user: user 
+      user_id: userId, 
+      message: message, 
+      is_read: false,
     });
 
     return await this.notificationRepository.save(newNotification);
   }
-
   
   async findByUserId(userId: number): Promise<NotificationsEntity[]> {
     return await this.notificationRepository.find({
       where: { user_id: userId },
-      order: { created_at: 'DESC' }, 
+      order: { created_at: 'DESC' },
+      withDeleted: true
     });
   }
 
@@ -42,6 +41,7 @@ export class NotificationsService {
      return await this.notificationRepository.find({
         where: { user_id: userId, is_read: false },
         order: { created_at: 'DESC' },
+          withDeleted: true
      });
   }
 
