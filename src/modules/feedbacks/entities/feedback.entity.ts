@@ -6,7 +6,7 @@ export class Feedback {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({type: 'int4'})//vinculado con stundend
+  @Column({type: 'int4'})
   student_id!: number;
 
   @Column({type:'varchar',length: 50})//estados,advertencias,etc sobre el estudiante

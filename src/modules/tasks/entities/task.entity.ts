@@ -60,3 +60,4 @@ export class Task {
   @UpdateDateColumn()
   updated_at: Date;
 }
+//adonis te falta la relacion
