@@ -8,6 +8,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { FeedbackModule } from './modules/feedbacks/feedback.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     UserModule,
     AuthModule,
     NotificationsModule,
+    FeedbackModule,
   ],
 })
 export class AppModule {}

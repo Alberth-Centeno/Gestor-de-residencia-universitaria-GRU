@@ -8,7 +8,7 @@ import { CreateFeedbackDto, UpdateFeedbackDto } from "../dto/feedback.dto";
 @Injectable()
 export class FeedbackService{
 
-      constructor(
+  constructor(
     @InjectRepository(Feedback)
     private readonly feedbackRepository: Repository<Feedback>,
   ) {}

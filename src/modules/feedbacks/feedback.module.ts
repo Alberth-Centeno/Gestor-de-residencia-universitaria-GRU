@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { FeedbackController} from "./controllers/feedback.controller";
-import { FeedbackService } from "./service/feedback.service";
+import { FeedbackService } from "./services/feedback.service";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Feedback } from "./entities/feedback.entity";
 
@@ -12,4 +12,4 @@ import { Feedback } from "./entities/feedback.entity";
     providers: [FeedbackService],
     exports: []
 })
-export class TasksModule {}
+export class FeedbackModule {}
