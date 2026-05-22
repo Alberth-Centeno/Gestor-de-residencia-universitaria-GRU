@@ -7,8 +7,8 @@ import {
   ParseIntPipe, 
   HttpStatus, 
   HttpCode, 
-  Patch, // <-- Agregado
-  Delete // <-- Agregado
+  Patch, 
+  Delete 
 } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
 import { CreateStudentDto, UpdateStudentDto } from '../dto/student.dto'; // <-- Agregado UpdateStudentDto

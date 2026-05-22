@@ -7,6 +7,7 @@ import { CreateStudentDto, UpdateStudentDto } from '../dto/student.dto';
 
 @Injectable()
 export class StudentService {
+
   constructor(
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
