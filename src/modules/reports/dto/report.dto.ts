@@ -1,7 +1,15 @@
-import { IsOptional, IsDateString, IsEnum, IsString } from 'class-validator';
+import { IsOptional, IsDateString, IsEnum, IsString, IsNotEmpty } from 'class-validator';
 
 // 1. DTO para filtrar el Historial de Permisos de Salida
 export class QueryExitPermitsReportDto {
+  @IsNotEmpty({ message: 'El userId de auditoría es requerido' })
+  @IsString()
+  userId: string;
+
+  @IsNotEmpty({ message: 'El userName de auditoría es requerido' })
+  @IsString()
+  userName: string;
+
   @IsOptional()
   @IsDateString({}, { message: 'startDate debe ser una fecha válida (YYYY-MM-DD)' })
   startDate?: string;
@@ -18,11 +26,19 @@ export class QueryExitPermitsReportDto {
 
   @IsOptional()
   @IsString()
-  career?: string; // Para agrupar pases por carrera de URACCAN
+  career?: string;
 }
 
 // 2. DTO para filtrar los Roles Semanales de Deberes (Cocina/Limpieza)
 export class QueryTasksReportDto {
+  @IsNotEmpty({ message: 'El userId de auditoría es requerido' })
+  @IsString()
+  userId: string;
+
+  @IsNotEmpty({ message: 'El userName de auditoría es requerido' })
+  @IsString()
+  userName: string;
+
   @IsOptional()
   @IsDateString({}, { message: 'date debe ser una fecha válida (YYYY-MM-DD)' })
   scheduledDate?: string;
