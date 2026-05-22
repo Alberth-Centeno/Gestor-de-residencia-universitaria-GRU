@@ -3,9 +3,13 @@ import { ReportsController } from './controllers/reports.controller';
 import { ReportsService } from './services/reports.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReportEntity } from './entities/reports.entity';
-
+import { ExitPermitsModule } from '../exit_permits/exit_permits.module'; 
+import { TasksModule } from '../tasks/tasks.module';
 @Module({
-  imports:[TypeOrmModule.forFeature([ReportEntity]),],
+  imports:[TypeOrmModule.forFeature([ReportEntity]),
+  ExitPermitsModule, 
+  TasksModule,
+  ],
   controllers: [ReportsController],
   providers: [ReportsService],
   exports: [TypeOrmModule, ReportsService],
