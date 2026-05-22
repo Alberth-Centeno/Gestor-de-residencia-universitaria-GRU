@@ -9,6 +9,7 @@ import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { FeedbackModule } from './modules/feedbacks/feedback.module';
+import { ReportsModule } from './modules/reports/reports.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FeedbackModule } from './modules/feedbacks/feedback.module';
     AuthModule,
     NotificationsModule,
     FeedbackModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}
