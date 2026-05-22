@@ -1,4 +1,4 @@
-import {ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
     IsInt,
     IsNotEmpty,
@@ -8,6 +8,7 @@ import {
     MinLength,
     IsDateString,
     IsOptional,
+    IsIn,
 } from 'class-validator';
 
 export class CreateExitPermitDto {
@@ -35,7 +36,9 @@ export class CreateExitPermitDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  // Aquí blindamos los estados exactos del esquema del profesor
+  @IsIn(['Pending', 'Approved', 'Rejected', 'Departed', 'Returned_OnTime', 'Returned_Late'])
+  @ApiProperty({ default: 'Pending' })
   status?: string;
   
   @IsInt()
@@ -76,3 +79,6 @@ export class CreateExitPermitDto {
   @ApiProperty()
   guard_observations?: string;
 }
+
+// DTO para el método PATCH, hereda todo lo de arriba pero como opcional
+export class UpdateExitPermitDto extends PartialType(CreateExitPermitDto) {}
