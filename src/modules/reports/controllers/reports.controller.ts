@@ -15,8 +15,7 @@ export class ReportsController {
     @Res() res: express.Response // Inyectamos la respuesta nativa para manejar streams
   ) {
     const { userId, userName } = query;
-    
-    // Generamos el documento PDFKit desde el servicio
+    //se genera pdf desde el servicio
     const pdfDoc = await this.reportsService.generateExitPermitsReport(query, Number(userId), userName);
 
     // Configuramos las cabeceras HTTP para descarga de PDF
