@@ -10,5 +10,6 @@ import { StudentEntity } from '../students/entities/student.entity';
   imports: [TypeOrmModule.forFeature([Task, StudentEntity])], 
   controllers: [TaskController],
   providers: [TaskService],
+  exports: [TaskService],
 })
 export class TasksModule {}
