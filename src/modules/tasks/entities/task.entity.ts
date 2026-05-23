@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { StudentEntity } from '../../students/entities/student.entity'; 
 
 @Entity('tasks')
 export class Task {
@@ -13,6 +16,11 @@ export class Task {
 
   @Column()
   student_id: number;
+
+  
+  @ManyToOne(() => StudentEntity, (student) => student.tasks, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'student_id' })
+  student: StudentEntity;
 
   @Column({
     type: 'varchar',

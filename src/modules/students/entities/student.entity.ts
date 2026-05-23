@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
+import { Task } from '../../tasks/entities/task.entity'; 
 
 @Entity('students')
 export class StudentEntity {
@@ -12,7 +13,6 @@ export class StudentEntity {
 
   @Column({ unique: true })
   student_code: string;
-
 
   @Column('varchar', { length: 255 })
   first_name: string;
@@ -29,11 +29,14 @@ export class StudentEntity {
   @Column('varchar', { length: 255, default: 'Active' })
   scholarship_status: string;
 
- 
   @OneToOne(() => UserEntity, (user) => user.id, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @OneToMany(() => ExitPermit, (exitPermit) => exitPermit.student)
   exitPermits: ExitPermit[];
+
+  
+  @OneToMany(() => Task, (task) => task.student)
+  tasks: Task[];
 }
