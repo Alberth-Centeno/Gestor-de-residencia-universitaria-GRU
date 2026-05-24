@@ -10,7 +10,7 @@ import {
 import { TaskService } from '../services/task.service';
 import { CreateTaskDto } from '../dto/task.dto';
 
-@Controller('task') // 👈 CAMBIA ESTO (Quítale el 'api/v1/')
+@Controller('task') 
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
@@ -22,6 +22,12 @@ export class TaskController {
   @Get()
   findAll() {
     return this.taskService.findAll();
+  }
+
+  
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.taskService.findOne(+id);
   }
 
   @Patch(':id')
