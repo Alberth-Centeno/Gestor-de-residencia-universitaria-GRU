@@ -1,13 +1,14 @@
-import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn } from "typeorm";
-
+import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,ManyToOne,JoinColumn } from "typeorm";
+import { StudentEntity } from "../../students/entities/student.entity";
 @Entity('feedbacks')
 
 export class Feedback {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({type: 'int4'})
-  student_id!: number;
+  @ManyToOne(() => StudentEntity, student => student.feedbacks)
+  @JoinColumn({ name: 'student_id' })
+  student!: StudentEntity
 
   @Column({type:'varchar',length: 50})//estados,advertencias,etc sobre el estudiante
   type!: string;
