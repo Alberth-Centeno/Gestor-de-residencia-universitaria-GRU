@@ -16,40 +16,33 @@ export class TaskService {
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
 
-    
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
   ) {}
 
   async create(createTaskDto: CreateTaskDto) {
     try {
-      
       const student = await this.studentRepository.findOne({
         where: { id: createTaskDto.student_id },
       });
 
-      
       if (!student) {
         throw new NotFoundException(`El estudiante con ID ${createTaskDto.student_id} no se encuentra registrado.`);
       }
 
-      
       const task = this.taskRepository.create(createTaskDto);
       await this.taskRepository.save(task);
 
       return task;
     } catch (error) {
       console.log(error);
-      
       if (error instanceof NotFoundException) throw error;
-      
       throw new InternalServerErrorException('Error al crear la tarea');
     }
   }
 
   async findAll() {
     try {
-      
       return await this.taskRepository.find({
         relations: ['student'], 
       });
@@ -59,7 +52,25 @@ export class TaskService {
     }
   }
 
-  
+  async findOne(id: number) {
+    try {
+      const task = await this.taskRepository.findOne({ 
+        where: { id },
+        relations: ['student']
+      });
+
+      if (!task) {
+        throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
+      }
+
+      return task;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Error al obtener la tarea');
+    }
+  }
+
   async update(id: number, updateTaskDto: any) { 
     try {
       const task = await this.taskRepository.preload({
@@ -79,7 +90,6 @@ export class TaskService {
     }
   }
 
-  
   async remove(id: number) {
     try {
       const task = await this.taskRepository.findOne({ where: { id } });
