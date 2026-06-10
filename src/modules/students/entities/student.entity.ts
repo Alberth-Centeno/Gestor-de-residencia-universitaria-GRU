@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany
 import { UserEntity } from '../../users/entities/user.entity';
 import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
 import { Task } from '../../tasks/entities/task.entity'; 
-
-
 import { Feedback } from '../../feedbacks/entities/feedback.entity';
 
 @Entity('students')
