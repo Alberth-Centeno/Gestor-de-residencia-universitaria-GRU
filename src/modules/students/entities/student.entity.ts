@@ -1,13 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany,ManyToOne } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
 import { Task } from '../../tasks/entities/task.entity'; 
-import { NotificationsEntity } from '../../notifications/entities/notifications.entity';
+
+
+import { Feedback } from '../../feedbacks/entities/feedback.entity';
 
 @Entity('students')
 export class StudentEntity {
   @PrimaryGeneratedColumn('increment', { type: 'int4' })
   id: number;
+
+  @OneToMany(() => Feedback, feedback => feedback.student)
+  feedbacks!: Feedback[];
   
   @Column({ type: 'int4' })
   user_id: number;
