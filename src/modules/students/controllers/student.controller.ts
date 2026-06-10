@@ -1,17 +1,6 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Body, 
-  Param, 
-  ParseIntPipe, 
-  HttpStatus, 
-  HttpCode, 
-  Patch, 
-  Delete 
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, HttpStatus, HttpCode, Put, Delete } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
-import { CreateStudentDto, UpdateStudentDto } from '../dto/student.dto'; // <-- Agregado UpdateStudentDto
+import { CreateStudentDto } from '../dto/student.dto';
 
 @Controller('students')
 export class StudentController {
@@ -20,6 +9,7 @@ export class StudentController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createStudentDto: CreateStudentDto) {
+   
     return await this.studentService.create(createStudentDto);
   }
 
@@ -33,19 +23,14 @@ export class StudentController {
     return await this.studentService.findOne(id);
   }
 
-  // === NUEVO: Endpoint para editar un estudiante por ID ===
-  @Patch(':id')
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateStudentDto: UpdateStudentDto,
-  ) {
-    return await this.studentService.update(id, updateStudentDto);
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateStudentDto>) {
+    return await this.studentService.update(id, updateData);
   }
 
-  // === NUEVO: Endpoint para eliminar un estudiante por ID ===
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT) // Devuelve un 204 No Content (estándar para eliminaciones exitosas sin cuerpo)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return await this.studentService.remove(id);
+    return await this.studentService.delete(id);
   }
 }

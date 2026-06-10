@@ -37,7 +37,7 @@ export class UserEntity {
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updated_at: Date;
 
-    @DeleteDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @DeleteDateColumn({ type: 'timestamp',nullable: true, default: null })
     deleted_at: Date;
 
     @OneToOne(() => StudentEntity, (student) => student.user)

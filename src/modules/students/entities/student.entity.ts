@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany
 import { UserEntity } from '../../users/entities/user.entity';
 import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
 import { Task } from '../../tasks/entities/task.entity'; 
+import { NotificationsEntity } from '../../notifications/entities/notifications.entity';
 
 @Entity('students')
 export class StudentEntity {
@@ -36,7 +37,7 @@ export class StudentEntity {
   @OneToMany(() => ExitPermit, (exitPermit) => exitPermit.student)
   exitPermits: ExitPermit[];
 
-  
   @OneToMany(() => Task, (task) => task.student)
   tasks: Task[];
+
 }
