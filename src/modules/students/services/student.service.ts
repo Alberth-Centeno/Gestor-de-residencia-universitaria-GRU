@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException, Delete } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentEntity } from '../entities/student.entity';
@@ -7,6 +7,9 @@ import { CreateStudentDto, UpdateStudentDto } from '../dto/student.dto';
 
 @Injectable()
 export class StudentService {
+  delete(id: number) {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(
     @InjectRepository(StudentEntity)
@@ -25,7 +28,7 @@ export class StudentService {
         scholarship_status 
     } = createStudentData;
 
-    const existingUser = await this.userService.findById(user_id);
+    const existingUser = await this.userService.findOne(user_id);
     if (!existingUser) {
         throw new NotFoundException(`No se puede crear el estudiante porque el usuario con ID ${user_id} no existe.`);
     }
@@ -73,7 +76,7 @@ export class StudentService {
       const student = await this.findOne(id);
 
       if (updateStudentDto.user_id && updateStudentDto.user_id !== student.user_id) {
-        const existingUser = await this.userService.findById(updateStudentDto.user_id);
+        const existingUser = await this.userService.findOne(updateStudentDto.user_id);
         if (!existingUser) {
           throw new NotFoundException(`No se puede actualizar: El usuario con ID ${updateStudentDto.user_id} no existe.`);
         }
@@ -95,7 +98,7 @@ export class StudentService {
     }
   }
 
-  async remove(id: number) {
+  async Delete(id: number) {
     try {
       const student = await this.findOne(id);
       await this.studentRepository.remove(student);

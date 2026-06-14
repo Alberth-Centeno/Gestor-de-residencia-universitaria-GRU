@@ -80,5 +80,8 @@ export class Task {
   created_at: Date; // Fecha de creación del registro
 
   @UpdateDateColumn()
+
   updated_at: Date; // Fecha de la última actualización
 }
+
+
