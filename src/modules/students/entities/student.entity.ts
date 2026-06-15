@@ -4,14 +4,16 @@ import { ExitPermit } from '../../exit_permits/entities/exit_permits.entity';
 import { Task } from '../../tasks/entities/task.entity'; 
 import { Feedback } from '../../feedbacks/entities/feedback.entity';
 
+export enum shifType {
+  MORNING = 'matutino',
+  AFTERNOON = 'vespertino',
+  EVENING = 'nocturno',
+}
 @Entity('students')
 export class StudentEntity {
   @PrimaryGeneratedColumn('increment', { type: 'int4' })
   id: number;
 
-  @OneToMany(() => Feedback, feedback => feedback.student)
-  feedbacks!: Feedback[];
-  
   @Column({ type: 'int4' })
   user_id: number;
 
@@ -26,6 +28,9 @@ export class StudentEntity {
 
   @Column('varchar', { length: 255 })
   career: string;
+
+  @Column({ type: 'enum', enum: shifType, default: shifType.MORNING })
+  shift: shifType;
 
   @Column('varchar', { length: 255, nullable: true })
   room_number: string;
@@ -42,5 +47,8 @@ export class StudentEntity {
 
   @OneToMany(() => Task, (task) => task.student)
   tasks: Task[];
+
+  @OneToMany(() => Feedback, feedback => feedback.student)
+  feedbacks!: Feedback[];
 
 }
