@@ -173,7 +173,7 @@ export class ReportsService {
     doc.fillColor('#16a34a').rect(pageWidth - 16, 0, 6, 842).fill();
 
     try {
-      doc.image('public/logo_de_uraccan.png', 50, 40, { width: 65 });
+      doc.image('public/img/logo_de_uraccan.png', 50, 40, { width: 65 });
     } catch (error) {
       doc.fontSize(8).fillColor('#ef4444').text('[Escudo no encontrado]', 50, 65);
     }
