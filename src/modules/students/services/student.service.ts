@@ -109,4 +109,13 @@ export class StudentService {
       throw new InternalServerErrorException('Error interno al eliminar el perfil del estudiante.');
     }
   }
+
+  // NUEVO MÉTODO AGREGADO AQUÍ 
+  async getAvailableStudents(targetDate: Date): Promise<StudentEntity[]> {
+    // Por ahora devolvemos todos los estudiantes para que el módulo tasks deje de dar error.
+    // Tu compañero de students puede afinar los filtros aquí luego.
+    return await this.studentRepository.find({
+      relations: ['user'] 
+    });
+  }
 }
