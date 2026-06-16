@@ -98,28 +98,48 @@ export class TaskService {
    * lo que permite combinar los datos actuales con
    * los nuevos valores enviados en la petición.
    */
-  async update(id: number, updateTaskDto: any) {
-    try {
-      const task = await this.taskRepository.preload({
-        id,
-        ...updateTaskDto, // Aplicar únicamente los campos recibidos
-      });
+  /**
+ * Actualiza una tarea existente utilizando preload,
+ * lo que permite combinar los datos actuales con
+ * los nuevos valores enviados en la petición.
+ */
+async update(id: number, updateTaskDto: any) {
+  try {
+    const task = await this.taskRepository.preload({
+      id,
+      ...updateTaskDto, // Aplicar únicamente los campos recibidos
+    });
 
-      if (!task) {
-        throw new NotFoundException(
-          `Tarea con ID ${id} no encontrada`,
-        );
-      }
-
-      return await this.taskRepository.save(task); // Persistir cambios
-    } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-
-      throw new InternalServerErrorException(
-        'Error al actualizar la tarea',
+    if (!task) {
+      throw new NotFoundException(
+        `Tarea con ID ${id} no encontrada`,
       );
     }
+
+    /**
+     * Si la tarea cambia a estado Completed,
+     * registrar automáticamente la fecha de finalización.
+     *
+     * Se ignora cualquier completed_at enviado por el usuario
+     * para evitar manipulaciones o inconsistencias.
+     */
+    if (
+      updateTaskDto.status === 'Completed' &&
+      !task.completed_at
+    ) {
+      task.completed_at = new Date();
+    }
+
+    return await this.taskRepository.save(task);
+
+  } catch (error) {
+    if (error instanceof NotFoundException) throw error;
+
+    throw new InternalServerErrorException(
+      'Error al actualizar la tarea',
+    );
   }
+}
 
   /**
    * Elimina una tarea después de verificar
@@ -175,7 +195,7 @@ export class TaskService {
 
       const availableStudents =
         await this.studentService.getAvailableStudents(
-          new Date(targetDate),
+          new Date(targetDate), // Consultar estudiantes disponibles para la fecha indicada
         );
 
       if (availableStudents.length === 0) {
