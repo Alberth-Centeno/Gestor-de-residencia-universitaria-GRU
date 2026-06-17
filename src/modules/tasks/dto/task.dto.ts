@@ -7,13 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 
-// DTO utilizado para registrar una nueva tarea.
-// Aquí se definen los datos que el sistema espera recibir
-// cuando se realiza una petición POST para crear una tarea.
 export class CreateTaskDto {
-
-  // Identificador del estudiante al que se le asignará la tarea.
-  // Debe coincidir con un estudiante existente en la base de datos.
   @IsInt()
   @ApiProperty({
     example: 1,
@@ -21,8 +15,6 @@ export class CreateTaskDto {
   })
   student_id: number;
 
-  // Tipo o categoría de la tarea.
-  // Ejemplos: limpieza, cocina, lavandería, mantenimiento, etc.
   @IsString()
   @ApiProperty({
     example: 'Kitchen',
@@ -30,9 +22,6 @@ export class CreateTaskDto {
   })
   task_type: string;
 
-  // Información adicional que describe la tarea.
-  // Este campo es opcional porque algunas tareas pueden
-  // identificarse únicamente con su tipo.
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -42,8 +31,6 @@ export class CreateTaskDto {
   })
   description?: string;
 
-  // Fecha programada para realizar la tarea.
-  // Debe enviarse en formato YYYY-MM-DD.
   @IsDateString()
   @ApiProperty({
     example: '2026-05-13',
@@ -51,8 +38,6 @@ export class CreateTaskDto {
   })
   scheduled_date: Date;
 
-  // Hora de inicio programada para la tarea.
-  // Se valida que el formato sea HH:MM o HH:MM:SS.
   @IsOptional()
   @IsString()
   @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/, {
@@ -66,8 +51,6 @@ export class CreateTaskDto {
   })
   start_time?: string;
 
-  // Hora estimada de finalización.
-  // También se valida para evitar formatos incorrectos.
   @IsOptional()
   @IsString()
   @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/, {
@@ -81,9 +64,6 @@ export class CreateTaskDto {
   })
   end_time?: string;
 
-  // Estado actual de la tarea.
-  // Normalmente se crea como "Pending", pero puede cambiar
-  // posteriormente a otros estados según la lógica del sistema.
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -94,7 +74,8 @@ export class CreateTaskDto {
   status?: string;
 }
 
-// DTO utilizado para actualizar tareas existentes.
-// Hereda todos los campos de CreateTaskDto pero los convierte
-// en opcionales, permitiendo modificar únicamente los datos necesarios.
-export class UpdateTaskDto extends PartialType(CreateTaskDto) {}
+export class UpdateTaskDto extends PartialType(CreateTaskDto) {
+  @IsOptional()
+  @IsInt()
+  verified_by?: number;
+}
