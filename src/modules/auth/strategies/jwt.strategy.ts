@@ -21,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     // Retornamos el rol que viene empaquetado en el token
+    console.log('Payload recibido en validate:', payload);
     return { userId: payload.sub, email: payload.email, role: payload.role };
   }
 }

@@ -14,7 +14,9 @@
       private readonly feedbackRepository: Repository<Feedback>,
     ) {}
 
-    async create(createFeedbackDto: CreateFeedbackDto) {
+    async create(createFeedbackDto: CreateFeedbackDto,
+      userId: number,
+    ) {
 
       try {
 
@@ -30,7 +32,10 @@
           is_read: createFeedbackDto.is_read,
           student:{
             id: createFeedbackDto.student_id,
-          }
+          },
+          createdBy: {
+            id: userId,
+          },
 
 
             
@@ -55,7 +60,9 @@
       try {
 
         return await this.feedbackRepository.find({
-          relations:['student']
+          relations:['student',
+                    'createdBy'
+          ]
         });
 
       } catch (error) {
@@ -74,7 +81,9 @@
 
         return await this.feedbackRepository.findOne({ 
           where : {id },
-          relations: ['student'],
+          relations: ['student',
+                      'createdBy'
+          ],
       });
 
       } catch (error) {
