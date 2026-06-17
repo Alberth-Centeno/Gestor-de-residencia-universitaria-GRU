@@ -7,65 +7,81 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { StudentEntity } from '../../students/entities/student.entity'; 
+import { StudentEntity } from '../../students/entities/student.entity';
 
-@Entity('tasks')
+@Entity('tasks') // Tabla tasks en PostgreSQL
 export class Task {
+
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number; // Identificador único generado automáticamente
 
   @Column()
-  student_id: number;
+  student_id: number; // Estudiante al que se asigna la tarea
 
-  
-  @ManyToOne(() => StudentEntity, (student) => student.tasks, { onDelete: 'CASCADE' })
+  @ManyToOne(() => StudentEntity, (student) => student.tasks, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'student_id' })
-  student: StudentEntity;
+  student: StudentEntity; // Relación con la entidad Student
 
   @Column({
     type: 'varchar',
     default: 'Kitchen',
   })
-  task_type: string;
+  task_type: string; // Tipo o categoría de la tarea
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  description: string;
+  description: string; // Descripción detallada de la tarea
 
   @Column({
     type: 'date',
   })
-  scheduled_date: Date;
+  scheduled_date: Date; // Fecha programada para realizar la tarea
+
+  @Column({
+    type: 'time',
+    nullable: true,
+  })
+  start_time: string; // Hora de inicio programada (HH:MM:SS)
+
+  @Column({
+    type: 'time',
+    nullable: true,
+  })
+  end_time: string; // Hora estimada de finalización (HH:MM:SS)
 
   @Column({
     type: 'varchar',
     default: 'Pending',
   })
-  status: string;
+  status: string; // Estado actual de la tarea
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  completed_at: Date;
+  completed_at: Date; // Fecha y hora en que la tarea fue completada
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  verified_at: Date;
+  verified_at: Date; // Fecha y hora en que la tarea fue verificada
 
   @Column({
     nullable: true,
   })
-  verified_by: number;
+  verified_by: number; // Usuario que verificó la tarea
 
   @CreateDateColumn()
-  created_at: Date;
+  created_at: Date; // Fecha de creación del registro
 
   @UpdateDateColumn()
-  updated_at: Date;
+
+  updated_at: Date; // Fecha de la última actualización
 }
-//adonis te falta la relacion
+
+
