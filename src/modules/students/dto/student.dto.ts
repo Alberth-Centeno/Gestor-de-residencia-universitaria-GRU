@@ -38,14 +38,13 @@ export class CreateStudentDto {
   career: string;
 
   @IsEnum(shifType)
-  @IsOptional()
   @ApiProperty({
-    required: false,
     enum: shifType,
     example: shifType.MORNING,
     description: 'Turno asignado al estudiante',
   })
-  shift?: shifType;
+  @IsNotEmpty()
+  shift: shifType;
 
   @IsString()
   @IsOptional()
