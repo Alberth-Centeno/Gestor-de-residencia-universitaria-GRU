@@ -158,101 +158,130 @@ export class TaskService {
   }
 
   async autoAssignTasks(targetDate: string) {
-    try {
-      const morningTasks = [
-        {
-          task_type: 'Kitchen',
-          start_time: '08:00:00',
-          end_time: '09:00:00',
-          description: 'Preparar desayuno y limpiar',
-        },
-        {
-          task_type: 'Bathrooms',
-          start_time: '10:00:00',
-          end_time: '11:00:00',
-          description: 'Limpieza profunda de duchas',
-        },
-      ];
+  try {
+    const daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
 
-      const afternoonTasks = [
-        {
-          task_type: 'Hallways',
-          start_time: '14:00:00',
-          end_time: '15:00:00',
-          description: 'Barrer y trapear pasillos',
-        },
-      ];
+    const morningStudents =
+      await this.studentService.getStudentsByShift(
+        shifType.MORNING,
+      );
 
-      const afternoonStudents =
-        await this.studentService.getStudentsByShift(
-          shifType.AFTERNOON,
-        );
+    const afternoonStudents =
+      await this.studentService.getStudentsByShift(
+        shifType.AFTERNOON,
+      );
 
-      const morningStudents =
-        await this.studentService.getStudentsByShift(
-          shifType.MORNING,
-        );
-
-      const assignedTasks: Task[] = [];
-
-      const afternoonPool = [...afternoonStudents];
-      const morningPool = [...morningStudents];
-
-      for (const requirement of morningTasks) {
-        const chosenStudent = afternoonPool.shift();
-
-        if (!chosenStudent) {
-          continue;
-        }
-
-        const task = await this.taskRepository.save(
-          this.taskRepository.create({
-            student_id: chosenStudent.id,
-            task_type: requirement.task_type,
-            description: requirement.description,
-            scheduled_date: new Date(targetDate),
-            start_time: requirement.start_time,
-            end_time: requirement.end_time,
-            status: 'Pending',
-          }),
-        );
-
-        assignedTasks.push(task);
-      }
-
-      for (const requirement of afternoonTasks) {
-        const chosenStudent = morningPool.shift();
-
-        if (!chosenStudent) {
-          continue;
-        }
-
-        const task = await this.taskRepository.save(
-          this.taskRepository.create({
-            student_id: chosenStudent.id,
-            task_type: requirement.task_type,
-            description: requirement.description,
-            scheduled_date: new Date(targetDate),
-            start_time: requirement.start_time,
-            end_time: requirement.end_time,
-            status: 'Pending',
-          }),
-        );
-
-        assignedTasks.push(task);
-      }
-
-      return {
-        message: 'Asignación automática generada exitosamente',
-        tasks_created: assignedTasks.length,
-        details: assignedTasks,
-      };
-    } catch (error) {
-      console.error(error);
-
-      throw new InternalServerErrorException(
-        'Error interno al generar asignaciones',
+    if (
+      morningStudents.length === 0 &&
+      afternoonStudents.length === 0
+    ) {
+      throw new NotFoundException(
+        'No existen estudiantes registrados para asignar tareas',
       );
     }
+
+    const assignedTasks: Task[] = [];
+
+    let morningIndex = 0;
+    let afternoonIndex = 0;
+
+    const baseDate = new Date(targetDate);
+
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(baseDate);
+      currentDate.setDate(baseDate.getDate() + i);
+
+      const dayName = daysOfWeek[i];
+
+      /**
+       * 4 ESTUDIANTES MATUTINOS
+       */
+      for (let j = 0; j < 4; j++) {
+        if (morningStudents.length > 0) {
+          const morningStudent =
+            morningStudents[
+              morningIndex % morningStudents.length
+            ];
+
+          const morningTask =
+            await this.taskRepository.save(
+              this.taskRepository.create({
+                student_id: morningStudent.id,
+                task_type: 'Kitchen',
+                description:
+                  'Apoyo en cocina - turno matutino',
+                scheduled_date: currentDate,
+                day_of_week: dayName,
+                shift: 'Morning',
+                start_time: '08:00:00',
+                end_time: '09:00:00',
+                status: 'Pending',
+              }),
+            );
+
+          assignedTasks.push(morningTask);
+
+          morningIndex++;
+        }
+      }
+
+      /**
+       * 4 ESTUDIANTES VESPERTINOS
+       */
+      for (let j = 0; j < 4; j++) {
+        if (afternoonStudents.length > 0) {
+          const afternoonStudent =
+            afternoonStudents[
+              afternoonIndex % afternoonStudents.length
+            ];
+
+          const afternoonTask =
+            await this.taskRepository.save(
+              this.taskRepository.create({
+                student_id: afternoonStudent.id,
+                task_type: 'Kitchen',
+                description:
+                  'Apoyo en cocina - turno vespertino',
+                scheduled_date: currentDate,
+                day_of_week: dayName,
+                shift: 'Afternoon',
+                start_time: '14:00:00',
+                end_time: '15:00:00',
+                status: 'Pending',
+              }),
+            );
+
+          assignedTasks.push(afternoonTask);
+
+          afternoonIndex++;
+        }
+      }
+    }
+
+    return {
+      message:
+        'Asignación semanal generada exitosamente',
+      tasks_created: assignedTasks.length,
+      details: assignedTasks,
+    };
+  } catch (error) {
+    console.error(error);
+
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+
+    throw new InternalServerErrorException(
+      'Error interno al generar asignaciones',
+    );
   }
+}
 }
