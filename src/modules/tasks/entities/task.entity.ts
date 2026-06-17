@@ -9,79 +9,99 @@ import {
 } from 'typeorm';
 import { StudentEntity } from '../../students/entities/student.entity';
 
-@Entity('tasks') // Tabla tasks en PostgreSQL
+@Entity('tasks')
 export class Task {
-
   @PrimaryGeneratedColumn()
-  id: number; // Identificador único generado automáticamente
+  id: number;
 
   @Column()
-  student_id: number; // Estudiante al que se asigna la tarea
+  student_id: number;
 
   @ManyToOne(() => StudentEntity, (student) => student.tasks, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'student_id' })
-  student: StudentEntity; // Relación con la entidad Student
+  student: StudentEntity;
 
   @Column({
     type: 'varchar',
     default: 'Kitchen',
   })
-  task_type: string; // Tipo o categoría de la tarea
+  task_type: string;
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  description: string; // Descripción detallada de la tarea
+  description: string;
 
   @Column({
     type: 'date',
   })
-  scheduled_date: Date; // Fecha programada para realizar la tarea
+  scheduled_date: Date;
+
+  /**
+   * Nuevo campo para almacenar
+   * el día de la semana:
+   * Monday, Tuesday, Wednesday...
+   */
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  day_of_week: string;
+
+  /**
+   * Nuevo campo para almacenar
+   * el turno asignado.
+   *
+   * Morning
+   * Afternoon
+   */
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  shift: string;
 
   @Column({
     type: 'time',
     nullable: true,
   })
-  start_time: string; // Hora de inicio programada (HH:MM:SS)
+  start_time: string;
 
   @Column({
     type: 'time',
     nullable: true,
   })
-  end_time: string; // Hora estimada de finalización (HH:MM:SS)
+  end_time: string;
 
   @Column({
     type: 'varchar',
     default: 'Pending',
   })
-  status: string; // Estado actual de la tarea
+  status: string;
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  completed_at: Date; // Fecha y hora en que la tarea fue completada
+  completed_at: Date;
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  verified_at: Date; // Fecha y hora en que la tarea fue verificada
+  verified_at: Date;
 
   @Column({
     nullable: true,
   })
-  verified_by: number; // Usuario que verificó la tarea
+  verified_by: number;
 
   @CreateDateColumn()
-  created_at: Date; // Fecha de creación del registro
+  created_at: Date;
 
   @UpdateDateColumn()
-
-  updated_at: Date; // Fecha de la última actualización
+  updated_at: Date;
 }
-
-

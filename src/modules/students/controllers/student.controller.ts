@@ -22,24 +22,33 @@ export class StudentController {
   }
   
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR) // Solo los usuarios con rol 'admin' pueden obtener estudiantes
+  @UseGuards(JwtAuthGuard, RolesGuard) // Protege este endpoint con autenticación y autorización
   @ApiOperation({ summary: 'Obtener todos los estudiantes' })
   async findAll() {
     return await this.studentService.findAll();
   }
 
   @Get(':id')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR) // Solo los usuarios con rol 'admin' pueden obtener estudiantes
+  @UseGuards(JwtAuthGuard, RolesGuard) // Protege este endpoint con autenticación y autorización
   @ApiOperation({ summary: 'Obtener un estudiante por ID' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.studentService.findOne(id);
   }
 
   @Put(':id')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR) // Solo los usuarios con rol 'admin' pueden actualizar estudiantes
+  @UseGuards(JwtAuthGuard, RolesGuard) // Protege este endpoint con autenticación y autorización
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Actualizar un estudiante por ID' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateData: Partial<CreateStudentDto>) {
     return await this.studentService.update(id, updateData);
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR) // Solo los usuarios con rol 'admin' pueden eliminar estudiantes
+  @UseGuards(JwtAuthGuard, RolesGuard) // Protege este endpoint con autenticación y autorización
   @ApiOperation({ summary: 'Eliminar un estudiante por ID' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseIntPipe) id: number) {

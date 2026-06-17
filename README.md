@@ -339,9 +339,9 @@ Proyecto backend en desarrollo para la automatización y gestión de procesos de
 
 # Autores
 
-Albert Gabriel Centeno Aguilar
-Bryan Emanuel Flores Mejia
-Lennys Adonnis Mercado Davila
+Albert Gabriel Centeno Aguilar,
+Bryan Emanuel Flores Mejia,
+Lennys Adonnis Mercado Davila,
 Rodrigo Antonio Baez Ruiz
 
 Proyecto académico - Gestión de Residencia Universitaria (GRU)
