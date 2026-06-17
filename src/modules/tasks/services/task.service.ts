@@ -8,29 +8,25 @@ import { Repository } from 'typeorm';
 
 import { CreateTaskDto } from '../dto/task.dto';
 import { Task } from '../entities/task.entity';
-import { StudentEntity } from '../../students/entities/student.entity';
+import { StudentEntity, shifType } from '../../students/entities/student.entity';
 import { StudentService } from '../../students/services/student.service';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>, // Repositorio encargado de la entidad Task
+    private readonly taskRepository: Repository<Task>,
 
     @InjectRepository(StudentEntity)
-    private readonly studentRepository: Repository<StudentEntity>, // Permite consultar estudiantes registrados
+    private readonly studentRepository: Repository<StudentEntity>,
 
-    private readonly studentService: StudentService, // Servicio que administra la disponibilidad de estudiantes
+    private readonly studentService: StudentService,
   ) {}
 
-  /**
-   * Crea una nueva tarea verificando previamente
-   * que el estudiante asignado exista en el sistema.
-   */
   async create(createTaskDto: CreateTaskDto) {
     try {
       const student = await this.studentRepository.findOne({
-        where: { id: createTaskDto.student_id }, // Buscar estudiante asociado
+        where: { id: createTaskDto.student_id },
       });
 
       if (!student) {
@@ -39,9 +35,9 @@ export class TaskService {
         );
       }
 
-      const task = this.taskRepository.create(createTaskDto); // Construir entidad Task
+      const task = this.taskRepository.create(createTaskDto);
 
-      return await this.taskRepository.save(task); // Guardar en base de datos
+      return await this.taskRepository.save(task);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
 
@@ -51,14 +47,10 @@ export class TaskService {
     }
   }
 
-  /**
-   * Obtiene todas las tareas registradas junto
-   * con la información del estudiante relacionado.
-   */
   async findAll() {
     try {
       return await this.taskRepository.find({
-        relations: ['student'], // Cargar datos del estudiante asociado
+        relations: ['student'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -67,14 +59,11 @@ export class TaskService {
     }
   }
 
-  /**
-   * Busca una tarea específica mediante su identificador.
-   */
   async findOne(id: number) {
     try {
       const task = await this.taskRepository.findOne({
         where: { id },
-        relations: ['student'], // Incluir información del estudiante
+        relations: ['student'],
       });
 
       if (!task) {
@@ -93,21 +82,18 @@ export class TaskService {
     }
   }
 
-  /**
-   * Actualiza una tarea existente utilizando preload,
-   * lo que permite combinar los datos actuales con
-   * los nuevos valores enviados en la petición.
-   */
-  /**
- * Actualiza una tarea existente utilizando preload,
- * lo que permite combinar los datos actuales con
- * los nuevos valores enviados en la petición.
- */
-async update(id: number, updateTaskDto: any) {
+  async update(id: number, updateTaskDto: any) {
   try {
+    /**
+     * Evitar que el usuario manipule manualmente
+     * las fechas automáticas.
+     */
+    delete updateTaskDto.completed_at;
+    delete updateTaskDto.verified_at;
+
     const task = await this.taskRepository.preload({
       id,
-      ...updateTaskDto, // Aplicar únicamente los campos recibidos
+      ...updateTaskDto,
     });
 
     if (!task) {
@@ -117,11 +103,9 @@ async update(id: number, updateTaskDto: any) {
     }
 
     /**
-     * Si la tarea cambia a estado Completed,
-     * registrar automáticamente la fecha de finalización.
-     *
-     * Se ignora cualquier completed_at enviado por el usuario
-     * para evitar manipulaciones o inconsistencias.
+     * Cuando el estudiante marca la tarea
+     * como completada, registrar automáticamente
+     * la fecha y hora real.
      */
     if (
       updateTaskDto.status === 'Completed' &&
@@ -130,10 +114,24 @@ async update(id: number, updateTaskDto: any) {
       task.completed_at = new Date();
     }
 
+    /**
+     * Cuando un supervisor verifica la tarea,
+     * registrar automáticamente la fecha
+     * de verificación.
+     */
+    if (
+      updateTaskDto.status === 'Verified' &&
+      !task.verified_at
+    ) {
+      task.verified_at = new Date();
+    }
+
     return await this.taskRepository.save(task);
 
   } catch (error) {
-    if (error instanceof NotFoundException) throw error;
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
 
     throw new InternalServerErrorException(
       'Error al actualizar la tarea',
@@ -141,13 +139,9 @@ async update(id: number, updateTaskDto: any) {
   }
 }
 
-  /**
-   * Elimina una tarea después de verificar
-   * que el registro exista en la base de datos.
-   */
   async remove(id: number) {
     try {
-      const task = await this.findOne(id); // Reutiliza la validación existente
+      const task = await this.findOne(id);
 
       await this.taskRepository.remove(task);
 
@@ -163,16 +157,9 @@ async update(id: number, updateTaskDto: any) {
     }
   }
 
-  /**
-   * Genera tareas automáticamente para una fecha determinada.
-   *
-   * La validación de disponibilidad ya no se realiza en este módulo.
-   * Esa responsabilidad fue delegada al módulo Students para mantener
-   * una mejor separación de responsabilidades dentro del sistema.
-   */
   async autoAssignTasks(targetDate: string) {
     try {
-      const dailyTasksNeeded = [
+      const morningTasks = [
         {
           task_type: 'Kitchen',
           start_time: '08:00:00',
@@ -185,6 +172,9 @@ async update(id: number, updateTaskDto: any) {
           end_time: '11:00:00',
           description: 'Limpieza profunda de duchas',
         },
+      ];
+
+      const afternoonTasks = [
         {
           task_type: 'Hallways',
           start_time: '14:00:00',
@@ -193,24 +183,27 @@ async update(id: number, updateTaskDto: any) {
         },
       ];
 
-      const availableStudents =
-        await this.studentService.getAvailableStudents(
-          new Date(targetDate), // Consultar estudiantes disponibles para la fecha indicada
+      const afternoonStudents =
+        await this.studentService.getStudentsByShift(
+          shifType.AFTERNOON,
         );
 
-      if (availableStudents.length === 0) {
-        throw new InternalServerErrorException(
-          'No hay estudiantes disponibles para esta fecha',
+      const morningStudents =
+        await this.studentService.getStudentsByShift(
+          shifType.MORNING,
         );
-      }
 
-      const assignedTasks: Task[] = []; // Almacena las tareas creadas
-      const currentPool = [...availableStudents]; // Copia local para manipular la lista
+      const assignedTasks: Task[] = [];
 
-      for (const requirement of dailyTasksNeeded) {
-        const chosenStudent = currentPool.shift(); // Obtiene el primer estudiante disponible
+      const afternoonPool = [...afternoonStudents];
+      const morningPool = [...morningStudents];
 
-        if (!chosenStudent) break; // Finaliza si ya no quedan estudiantes
+      for (const requirement of morningTasks) {
+        const chosenStudent = afternoonPool.shift();
+
+        if (!chosenStudent) {
+          continue;
+        }
 
         const task = await this.taskRepository.save(
           this.taskRepository.create({
@@ -224,7 +217,29 @@ async update(id: number, updateTaskDto: any) {
           }),
         );
 
-        assignedTasks.push(task); // Registrar tarea creada para el resultado final
+        assignedTasks.push(task);
+      }
+
+      for (const requirement of afternoonTasks) {
+        const chosenStudent = morningPool.shift();
+
+        if (!chosenStudent) {
+          continue;
+        }
+
+        const task = await this.taskRepository.save(
+          this.taskRepository.create({
+            student_id: chosenStudent.id,
+            task_type: requirement.task_type,
+            description: requirement.description,
+            scheduled_date: new Date(targetDate),
+            start_time: requirement.start_time,
+            end_time: requirement.end_time,
+            status: 'Pending',
+          }),
+        );
+
+        assignedTasks.push(task);
       }
 
       return {
@@ -233,7 +248,7 @@ async update(id: number, updateTaskDto: any) {
         details: assignedTasks,
       };
     } catch (error) {
-      if (error instanceof InternalServerErrorException) throw error;
+      console.error(error);
 
       throw new InternalServerErrorException(
         'Error interno al generar asignaciones',
