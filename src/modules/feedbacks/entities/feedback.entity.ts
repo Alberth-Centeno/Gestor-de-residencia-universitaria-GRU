@@ -1,7 +1,10 @@
 import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,ManyToOne,JoinColumn } from "typeorm";
 import { StudentEntity } from "../../students/entities/student.entity";
-@Entity('feedbacks')
+import{UserEntity} from "../../users/entities/user.entity";
 
+
+
+@Entity('feedbacks')
 export class Feedback {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -9,6 +12,10 @@ export class Feedback {
   @ManyToOne(() => StudentEntity, student => student.feedbacks)
   @JoinColumn({ name: 'student_id' })
   student!: StudentEntity
+  
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'created_by' }) 
+  createdBy!: UserEntity;
 
   @Column({type:'varchar',length: 50})//estados,advertencias,etc sobre el estudiante
   type!: string;

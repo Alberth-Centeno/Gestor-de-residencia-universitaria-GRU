@@ -8,6 +8,7 @@ import { Entity,
          from "typeorm";
 import { StudentEntity } from "../../students/entities/student.entity";
 import { NotificationsEntity } from "../../notifications/entities/notifications.entity";
+import { Feedback } from "../../feedbacks/entities/feedback.entity";
 
 export enum UserRole {
     ADMIN = 'Admin',
@@ -45,4 +46,7 @@ export class UserEntity {
 
     @OneToMany(() => NotificationsEntity, (notification) => notification.user)
     notifications: NotificationsEntity[];
+
+    @OneToMany(() => Feedback,(feedback) => feedback.createdBy,)
+    feedbacks: Feedback[];
 }
