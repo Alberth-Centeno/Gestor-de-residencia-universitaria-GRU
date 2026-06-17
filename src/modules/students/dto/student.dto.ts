@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional, IsInt } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { shifType } from '../entities/student.entity';
 
 export class CreateStudentDto {
   @IsInt()
@@ -21,10 +22,15 @@ export class CreateStudentDto {
   @IsNotEmpty()
   @ApiProperty()
   last_name: string; 
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
   career: string; 
+
+ @ApiProperty()
+  @IsNotEmpty()
+  shift: shifType;
 
   @IsString()
   @IsOptional()
