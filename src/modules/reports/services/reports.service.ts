@@ -71,7 +71,7 @@ export class ReportsService {
         }
 
         const reasonText = permit.reason || 'Sin motivo especificado';
-        const status = permit.status || 'Pending';
+        const status = permit.status || 'Pendiente';
         
         const displayDate = permit.actual_departure 
           ? new Date(permit.actual_departure).toLocaleDateString() 
@@ -160,9 +160,50 @@ export class ReportsService {
     } else {
       doc.fontSize(10).fillColor('#64748b').text('No se encontraron roles de tareas asignadas.', 50, startY, { align: 'center' });
     }
+    
+    if (query.inspectorObservations) {
+
+  startY += 40;
+
+  if (startY > 700) {
+    doc.addPage();
+    startY = 80;
+  }
+
+  doc
+    .fontSize(12)
+    .fillColor('#1a365d')
+    .text('OBSERVACIONES DEL INSPECTOR', 50, startY);
+
+  startY += 20;
+
+  doc
+    .rect(50, startY, 495, 80)
+    .strokeColor('#94a3b8')
+    .lineWidth(1)
+    .stroke();
+
+  doc
+    .fontSize(10)
+    .fillColor('#333333')
+    .text(
+      query.inspectorObservations,
+      60,
+      startY + 10,
+      {
+        width: 470,
+        align: 'justify'
+      }
+    );
+      doc.moveDown(2);
+
+  doc.text('_____________________________', 350, startY + 120);
+  doc.text('Frima de el Inspector ', 380, startY + 135);
+
+    }
 
     return doc;
-  }
+  } 
 
   // ENCABEZADO INSTITUCIONAL URACCAN
   private generateHeader(doc: PDFKit.PDFDocument, title: string, userName: string) {

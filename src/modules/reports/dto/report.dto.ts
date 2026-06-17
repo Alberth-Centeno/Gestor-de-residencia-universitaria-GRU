@@ -44,12 +44,18 @@ export class QueryTasksReportDto {
   scheduledDate?: string;
 
   @IsOptional()
-  @IsEnum(['Kitchen', 'Cleaning'], { message: 'El tipo de tarea debe ser Kitchen o Cleaning' })
+  @IsEnum(['Kitchen', 'Cleaning'])
   taskType?: string;
 
   @IsOptional()
-  @IsEnum(['Pending', 'DoneByStudent', 'VerifiedByInspector'], {
-    message: 'El estado de la tarea no es válido',
-  })
+  @IsEnum([
+    'Pending',
+    'DoneByStudent',
+    'VerifiedByInspector',
+  ])
   status?: string;
+
+  @IsOptional()
+  @IsString()
+  inspectorObservations?: string;
 }
